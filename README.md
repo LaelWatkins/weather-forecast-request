@@ -1,6 +1,6 @@
 Daily Weather Forecast Requester
 ----
-** Daily Forecast summary API **
+**Daily Forecast summary API**
 
 
 ### Build
