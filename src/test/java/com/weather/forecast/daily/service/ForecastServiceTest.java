@@ -9,6 +9,7 @@ import com.weather.forecast.daily.model.Forecast;
 import com.weather.forecast.daily.model.GridPattern;
 import com.weather.forecast.daily.model.Period;
 import com.weather.forecast.daily.model.Summary;
+import com.weather.forecast.daily.util.Utils;
 import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,12 +18,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +47,9 @@ class ForecastServiceTest {
 
     @Test
     void testInvokeDailyForecast_Successfully() throws JsonProcessingException {
+
+        String currentDayName = Utils.retrieveCurrentDayName("This afternoon");
+
         Period p = createPeriod();
         ArrayList<Period> periods = new ArrayList<>();
         periods.add(p);
@@ -57,16 +65,18 @@ class ForecastServiceTest {
         f.setGeometry(new GridPattern());
 
         Summary summary = new Summary();
-        DailySummary ds = new DailySummary("Tuesday",20.0,"Mostly Cloudy");
+        DailySummary ds = new DailySummary(currentDayName,20.0,"Mostly Cloudy");
         ArrayList<DailySummary> summaries = new ArrayList<>();
         summaries.add(ds);
         summary.setDaily(summaries);
+
+        String dailySummaryString = String.format("{\"day_name\":\"%s\",\"temp_high_celsius\":20.0,\"forecast_blurp\":\"Mostly Cloudy\"}",currentDayName);
 
         when(client.invokeRequest()).thenReturn(Mono.just(f));
         String dailySummary = service.retrieveDailyForecast();
 
         assertNotNull(dailySummary);
-        assertThat(dailySummary).contains("Tuesday");
+        assertThat(dailySummary).contains(currentDayName);
         assertThat(dailySummary).contains("20.0");
         assertThat(dailySummary).contains("Mostly Cloudy");
     }
