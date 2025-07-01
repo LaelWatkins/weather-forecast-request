@@ -9,33 +9,21 @@ import com.weather.forecast.daily.model.Summary;
 import com.weather.forecast.daily.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
 public class ForecastService {
 
     private WeatherRequestClient client;
-    private ObjectMapper objectMapper;
 
-    public ForecastService(WeatherRequestClient client, ObjectMapper mapper){
+    public ForecastService(WeatherRequestClient client){
         this.client = client;
-        this.objectMapper = mapper;
     }
 
-    public String retrieveDailyForecast() throws JsonProcessingException {
+    public Mono<Summary> retrieveDailyForecast() throws JsonProcessingException {
         try {
-            Forecast forecast = client.invokeRequest().block();
-            Summary summary =  forecast.getProperties().getPeriods().stream()
-                                     .filter( f -> (Utils.isCurrentDate(f.getStartTime()) &&
-                                                     Utils.isCurrentDate(f.getEndTime()) && f.getNumber().equals(1) ||
-                                                     f.getName().equalsIgnoreCase("tonight")))
-                                     .map( period -> new Summary(new DailySummary( Utils.retrieveCurrentDayName(period.getName()),
-                                                                       Utils.convertToCelsius(period.getTemperature()),
-                                                                       period.getShortForecast())))
-                                     .findFirst().get();
-            String dailySummaryString = objectMapper.writeValueAsString(summary);
-
-            return dailySummaryString;
+           return client.invokeRequest();
         } catch (RuntimeException e){
             throw e ;
         }
