@@ -21,11 +21,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatRuntimeException;
+
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,7 +78,6 @@ class ForecastServiceTest {
         ArrayList<DailySummary> summaries = new ArrayList<>();
         summaries.add(ds);
         summary.setDaily(summaries);
-
        Mono<Summary> testSummary = (Mono<Summary>) when(client.invokeRequest()).thenReturn(Mono.just(summary));
 
         assertNotNull(testSummary);
@@ -95,6 +96,7 @@ class ForecastServiceTest {
        assertEquals("Cannot invoke \"reactor.core.publisher.Mono.filter(java.util.function.Predicate)\" " +
            "because the return value of \"com.weather.forecast.daily.client.WeatherRequestClient.invokeRequest()\" " +
            "is null", exception.getMessage());
+
     }
 
     Period createPeriod() throws JsonProcessingException {
@@ -122,5 +124,4 @@ class ForecastServiceTest {
         Period period = mapper.readValue(periodString, Period.class);
         return period;
     }
-
 }
