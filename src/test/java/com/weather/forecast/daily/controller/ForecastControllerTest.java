@@ -1,5 +1,8 @@
 package com.weather.forecast.daily.controller;
 
+import com.weather.forecast.daily.model.DailySummary;
+import com.weather.forecast.daily.model.Forecast;
+import com.weather.forecast.daily.model.Summary;
 import com.weather.forecast.daily.service.ForecastService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,9 +13,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import reactor.core.publisher.Mono;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,9 +44,9 @@ class ForecastControllerTest {
 
     @Test
     void requestDailyForecast_Sucessfully() throws Exception {
-        String dailySummaryString = "{\"daily\":[{\"day_name\":\"Tuesday\",\"temp_high_celsius\":29.0,\"forecast_blurp\":\"Sunny\"}]}";
-
-        when(service.retrieveDailyForecast()).thenReturn(dailySummaryString);
+        DailySummary dailySummary =  new  DailySummary("Tuesday", 29.0, "Sunny" );
+        Summary summary = new Summary(dailySummary);
+        when(service.retrieveDailyForecast()).thenReturn(Mono.just(summary));
 
         mockMvc.perform(get(URL))
             .andExpect(MockMvcResultMatchers.status().isOk());

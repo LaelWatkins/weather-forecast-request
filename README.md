@@ -14,4 +14,4 @@ Daily Weather Forecast Requester
 
 ### Test the service
 Submit a request using curl or any http tool. (eg. SoapUI)
-``curl http://localhost:8080/api/v1/weather/forecast/daily``
+``curl -k http://localhost:8080/api/v1/weather/forecast/daily``
