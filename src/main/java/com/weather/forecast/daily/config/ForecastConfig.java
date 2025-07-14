@@ -1,15 +1,19 @@
 package com.weather.forecast.daily.config;
 
+import reactor.netty.http.client.HttpClient;
+
 import com.weather.forecast.daily.client.ForecastRequestClient;
 import com.weather.forecast.daily.client.WeatherRequestClient;
-import io.netty.channel.ChannelOption;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
+
+import io.netty.channel.ChannelOption;
+
 
 @Configuration
 public class ForecastConfig {
@@ -26,7 +30,7 @@ public class ForecastConfig {
     }
 
     @Bean
-    public WebClient webClient(){
+    public WebClient webClient() {
         HttpClient httpClient = HttpClient.create()
             .option(ChannelOption.SO_KEEPALIVE, true)
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);

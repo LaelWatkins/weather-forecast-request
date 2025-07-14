@@ -74,7 +74,7 @@ class ForecastRequestClientTest {
         when(requestHeadersSpec.headers(any())).thenReturn(requestHeadersSpec);
         when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
         when(responseSpec.toEntity(Forecast.class)).thenReturn(monoResponse);
-        Mono<Summary>testForecast = client.invokeRequest();
+        Mono<ResponseEntity<Forecast>> testForecast = client.invokeRequest();
 
         assertNotNull(testForecast);
 

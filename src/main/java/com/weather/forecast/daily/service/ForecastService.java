@@ -21,11 +21,15 @@ public class ForecastService {
         this.client = client;
     }
 
-    public Mono<Summary> retrieveDailyForecast() throws JsonProcessingException {
-        try {
-           return client.invokeRequest();
-        } catch (RuntimeException e){
-            throw e ;
-        }
+    public Mono<Summary> retrieveDailyForecast() {
+
+           return client.invokeRequest().filter(responseEntity -> responseEntity.getStatusCode().is2xxSuccessful())
+                .map(forecast -> forecast.getBody().getProperties().getPeriods().stream()
+                    .filter( f -> (Utils.isCurrentDate(f.getStartTime()) && Utils.isCurrentDate(f.getEndTime()) && f.getNumber().equals(1)
+                        || f.getName().equalsIgnoreCase("tonight")))
+                    .map( period -> new Summary(new DailySummary( Utils.retrieveCurrentDayName(period.getName()),
+                        Utils.convertToCelsius(period.getTemperature()),
+                        period.getShortForecast())))
+                    .findFirst().get());
     }
 }

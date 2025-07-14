@@ -77,7 +77,9 @@ class ForecastServiceTest {
         summaries.add(ds);
         summary.setDaily(summaries);
 
-       Mono<Summary> testSummary = (Mono<Summary>) when(client.invokeRequest()).thenReturn(Mono.just(summary));
+        ResponseEntity<Forecast> responseEntity = ResponseEntity.ok(new Forecast());
+
+        Mono<ResponseEntity<Forecast>>  testSummary = (Mono<ResponseEntity<Forecast>> ) when(client.invokeRequest()).thenReturn(Mono.just(responseEntity));
 
         assertNotNull(testSummary);
        // assertEquals(testSummary.block().getDaily().get(1), currentDayName);
@@ -87,7 +89,7 @@ class ForecastServiceTest {
     }
 
     //@Test
-    void testInvokeDailyForecast_UnSuccessfully() throws JsonProcessingException {
+    void testInvokeDailyForecast_UnSuccessfully()  {
        RuntimeException exception = assertThrows( RuntimeException.class, () -> {
            service.retrieveDailyForecast();
        });
